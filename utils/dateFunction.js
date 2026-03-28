@@ -1,28 +1,50 @@
-function getAgodaDates() {
-    const today = new Date();
+export function getBookingDates( startDate, endDate ) {
+    //milestone 2: Validate input
 
-    // Tính ngày Check-in (Current date + 2)
+    //Interger Gateway
+    if (!Number.isInteger(startDate) || !Number.isInteger(endDate)) {
+        throw new Error("Validation Error: startDate and endDate MUST BE Integer");
+    }
+
+    // Negative Gateway
+    if (startDate < 0 || endDate < 0) {
+        throw new Error("Validation Error: startDate and endDate MUST BE Non-negative");
+    }
+
+    // Logical Gateway
+    if (startDate >= endDate) {
+        throw new Error(`Validation Error: startDate (${startDate}) MUST BE Less Than endDate (${endDate})`);
+    }
+
+
+    //milestone 2: Get all type of date
+    const  today = new Date();
+
+    //Get Check-in date (current date + startDate(2))
     const checkIn = new Date(today);
-    checkIn.setDate(today.getDate() + 2);
+    checkIn.setDate(today.getDate() + startDate);
 
-    // Tính ngày Check-out (Current date + 3)
+    //Get Check-out date (current date + endDate(3))
     const checkOut = new Date(today);
-    checkOut.setDate(today.getDate() + 3);
+    checkOut.setDate(today.getDate() + endDate);
 
-    // Hàm phụ trợ để format ngày thành chuỗi 'YYYY-MM-DD'
+    // Get format Date 'YYYY-MM-DD'
     const formatDate = (date) => {
-        const year = date.getFullYear();
-        // JS đếm tháng từ 0, nên cần +1. padStart(2, '0') để đảm bảo luôn có 2 chữ số (VD: '04' thay vì '4')
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        
-        return `${year}-${month}-${day}`;
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
     };
+
+    //Get Target Month Year
+    const targetMonthYear = checkIn.toLocaleString('default', { month: 'long', year: 'numeric' });
 
     return {
-        checkInDate: formatDate(checkIn),
-        checkOutDate: formatDate(checkOut)
+        checkInDate: formatDate(checkIn),       // VD: "2026-03-30"
+        checkOutDate: formatDate(checkOut),     // VD: "2026-03-31"
+        monthToSearch: targetMonthYear          // VD: "March 2026"
     };
+
 }
 
-export default { getAgodaDates };
+export default { getBookingDates };
