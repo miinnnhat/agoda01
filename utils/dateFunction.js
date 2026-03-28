@@ -44,7 +44,58 @@ export function getBookingDates( startDate, endDate ) {
         checkOutDate: formatDate(checkOut),     // VD: "2026-03-31"
         monthToSearch: targetMonthYear          // VD: "March 2026"
     };
-
 }
 
-export default { getBookingDates };
+export async function selectDate(page, checkInDateStr, checkOutDateStr, targetMonthYear) {
+    if (!page) throw new Error('selectDate requires a playwright Page instance');
+    if (!checkInDateStr || !checkOutDateStr || !targetMonthYear) {
+        throw new Error('selectDate requires checkInDateStr, checkOutDateStr and targetMonthYear');
+    }
+
+    const checkInBox = page.locator('[data-selenium="checkInBox"]');
+    const monthCaptions = page.locator('.DayPicker-Caption');
+    const nextMonthBtn = page.getByRole('button', { name: 'Next Month' });
+    const lastMonthBtn = page.getByRole('button', { name: 'Previous Month' });
+
+    await checkInBox.click();
+
+    let maxRetries = 12;
+    let isFound = false;
+
+    const targetDateObj = new Date(`1 ${targetMonthYear}`);
+
+    while (maxRetries > 0) {
+        const visibleMonths = await monthCaptions.allTextContents();
+        const cleanMonths = visibleMonths.map(m => m.trim());
+
+        if (cleanMonths.includes(targetMonthYear)) {
+            isFound = true;
+            break;
+        }
+
+        const firstVisibleMonthObj = new Date(`1 ${cleanMonths[0]}`);
+
+        if (targetDateObj < firstVisibleMonthObj) {
+            if (await lastMonthBtn.isDisabled()) {
+                throw new Error(`Cannot click Previous Month to reach ${targetMonthYear}.`);
+            }
+            await lastMonthBtn.click();
+        } else {
+            await nextMonthBtn.click();
+        }
+
+        await page.waitForTimeout(400);
+        maxRetries -= 1;
+    }
+
+    if (!isFound) {
+        throw new Error(`Cannot find calendar month ${targetMonthYear} after ${maxRetries} attempts`);
+    }
+
+    await page.locator(`[data-selenium-date="${checkInDateStr}"]`).click();
+    await page.locator(`[data-selenium-date="${checkOutDateStr}"]`).click();
+
+    await page.mouse.click(10, 10);
+}
+
+export default { getBookingDates, selectDate };

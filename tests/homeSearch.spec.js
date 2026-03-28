@@ -4,7 +4,7 @@ import testData from '../data/testData.json';
 import {HomePage} from '../pages/homePage.pom.js';
 import { time } from 'node:console';
 import {getDate} from '../utils/dateFunction.js';
-import { TIMEOUT } from 'node:dns';
+import { getBookingDates } from '../utils/dateFunction.js';
 
 
 test.describe("Home Search", ()=>{
@@ -45,7 +45,6 @@ test.describe("Home Search", ()=>{
         while(true){
             
             const currentMonthYear = (await agodaPage.locator('div.DayPicker-Caption').first().textContent())?.trim();
-            // const currentMonthYear = await agodaPage.locator('DayPicker-Caption').textContent();
             if(currentMonthYear == todayMonthYear){
                 break;
             }
@@ -53,11 +52,9 @@ test.describe("Home Search", ()=>{
             //Verify last month first
             await agodaPage.getByRole('button', { name: 'Previous Month' }).click()  //last month button
                     
-            // Bạn định nghĩa ngày muốn chọn theo đúng format của thuộc tính
+            
             const startDate = '2026-03-29';
             const endDate = '2026-03-30';
-
-            // Playwright sẽ tìm thẳng thẻ span có chứa data-selenium-date tương ứng và click
             await agodaPage.locator(`[data-selenium-date="${startDate}"]`).click();
             await agodaPage.locator(`[data-selenium-date="${endDate}"]`).click();
 
@@ -117,14 +114,24 @@ test.describe("Home Search", ()=>{
     test('04 Connect all feature', async ({agodaPage}) =>{
         
         console.log("1. Fill in search input...");
-        await agodaPage.searchBox.pressSequentially(testData[0].hotelName, {delay: 100});
+        // await agodaPage.searchBox.pressSequentially(testData[0].hotelName, {delay: 100});
+        await agodaPage.searchHotel(testData[0].hotelName);
         console.log("   Search input filled with: " + testData[0].hotelName);
-        await agodaPage.firstSuggestion.click();
         console.log("   First suggestion clicked: " + testData[0].hotelName);
 
 
-        
+
         console.log("2. Select check-in and check-out dates ");
+
+        await agodaPage.checkInBox.click();
+        const data = testData[0];
+        await agodaPage.selectDates(data.checkInDate, data.checkOutDate, data.targetMonthYear);
+        console.log(`   Check-in date: ${data.checkInDate} and Check-out date: ${data.checkOutDate} selected!`);
+
+
+
+
+
 
 
         console.log("3. Select occupancy options");
@@ -135,11 +142,52 @@ test.describe("Home Search", ()=>{
         console.log("4. Click search button ");
         await agodaPage.searchButton.click();
 
+        
+
+    // --- BƯỚC 5: BẮT LẤY KHÁCH SẠN ĐẦU TIÊN TRONG LIST ---
+    console.log("5. Đang chờ danh sách kết quả hiển thị...");
+    
+    // Locator bắt toàn bộ list khách sạn, và dùng .first() để chỉ lấy thằng trên cùng
+    const firstHotel = agodaPage.page.locator('[data-selenium="hotel-item"]').first();
+    
+    // Chờ cho khách sạn đầu tiên thực sự hiện lên màn hình (Auto-wait 15s)
+    await firstHotel.waitFor({ state: 'visible', timeout: 15000 });
+
+
+    // --- BƯỚC 6: EXPECT GIÁ TIỀN CỦA THẰNG ĐẦU TIÊN ---
+    console.log("6. Đang kiểm tra giá tiền của khách sạn này...");
+
+    // Thêm .first() vào cuối để bảo Playwright: "Nếu thấy nhiều giá, cứ lấy cái đầu tiên cho tôi"
+    const priceElement = firstHotel.locator('span[data-selenium="display-price"]').first();
+
+    // 1. Xác nhận (Expect) cục giá tiền phải xuất hiện trên giao diện
+    await expect(priceElement).toBeVisible();
+
+    // 2. Lấy text ra, xoá hết chữ, chỉ giữ lại số để kiểm tra nó lớn hơn 0
+    const priceText = await priceElement.textContent();
+    const priceNumber = parseInt(priceText.replace(/[^0-9]/g, ''), 10);
+    
+    expect(priceNumber).toBeGreaterThan(0);
+    console.log(`[Thành công] Khách sạn đầu tiên có giá hiển thị là: ${priceText}`);
+
+    // --- BƯỚC 7: CLICK CHỌN (ĐỂ ĐÁP ỨNG ĐÚNG ĐỀ BÀI) ---
+    // Đề bài có câu "choose the first available option", nên mình click vào nó 1 cái cho đúng thủ tục
+    console.log("7. Click chọn khách sạn đầu tiên...");
+    await firstHotel.click();
+        
+
+        console.log("   Search button clicked!");
+
+        console.log("5. Verify search results ");
+
+        console.log("   Search results verified!");
+        
+
 
      
 
     
     
-    })
+    });
 
-})
+});
