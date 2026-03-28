@@ -3,42 +3,40 @@ export class HomePage {
     
     constructor(page){
         this.page = page;
+        // Locators
 
+        // 1. Search Box Locators
         this.searchBox = page.locator('[data-selenium="textInput"]');
-        this.searchButton= page.getByRole('button', {name: "/search/i"});
+        this.firstSuggestion = page.locator('[data-testid="topDestinationListItem"]').first();
+        this.searchButton = page.locator('[data-selenium="search-button"]');
 
-        //Check-in and Check-out date selectors
-        this.checkInDateSelector = page.locator('[data-selenium="checkInDate"]');
-        this.checkOutDateSelector = page.locator('[data-selenium="checkOutDate"]');
+        // 2. Calendar, Date Picker Locators
+        this.checkInBox = page.locator('[data-selenium="checkInBox"]');
+        this.checkOutBox = page.locator('[data-selenium="checkOutBox"]');
 
+        this.monthCaptions = page.locator('.DayPicker-Caption');
+        
+        this.nextMonthBtn = page.getByRole('button', { name: 'Next Month' });
+        this.lastMonthBtn = page.getByRole('button', { name: 'Previous Month' });
 
-        //Calendar month and year
-
-        //Month Button
-        this.nextMonthButton = page.locator('.CalendarMonth_caption');
-        this.lastMonthButton = page.locator('.CalendarMonth_caption').nth(-1);
-
-        //Day Button
-        this.dayButton = page.locator('.CalendarDay__default');
-
-        //Year Button
-        // this.nextYearButton = page.locator('.CalendarMonth_caption');
-        // this.lastYearButton = page.locator('.CalendarMonth_caption').nth(-1);
+        //startDate and endDate in Calendar
 
 
-        //Selecting number of guests, rooms, children
+        // 3. Occupancy Locators (Dùng data-element-name từ spec của bạn, rất chắc chắn!)
+        this.occupancyBox = page.locator('#occupancy-box');
+        
+        this.roomsValue = page.locator('[data-selenium="desktop-occ-room-value"] .value'); // Cần update selector .value theo thực tế
+        this.addRoomsBtn = page.locator('[data-element-name="occupancy-selector-panel-rooms"][data-selenium="plus"]');
+        this.minusRoomsBtn = page.locator('[data-element-name="occupancy-selector-panel-rooms"][data-selenium="minus"]');
 
-        //Adult increase and decrease buttons
-        this.adultIncreaseButton = page.getByRole('button', {name: "+"});
-        this.adultDecreaseButton = page.getByRole('button', {name: "-"});
+        this.adultsValue = page.locator('[data-selenium="desktop-occ-adult-value"] .value');
+        this.addAdultsBtn = page.locator('[data-element-name="occupancy-selector-panel-adult"][data-selenium="plus"]');
+        this.minusAdultsBtn = page.locator('[data-element-name="occupancy-selector-panel-adult"][data-selenium="minus"]');
 
-        //Room increase and decrease buttons
-        this.roomIncreaseButton = page.getByRole('button', {name: "+"}).nth(1);
-        this.roomDecreaseButton = page.getByRole('button', {name: "-"}).nth(1);
+        this.childrenValue = page.locator('[data-selenium="desktop-occ-children-value"] .value');
+        this.addChildrenBtn = page.locator('[data-element-name="occupancy-selector-panel-children"][data-selenium="plus"]');
+        this.minusChildrenBtn = page.locator('[data-element-name="occupancy-selector-panel-children"][data-selenium="minus"]');
 
-        //Children increase and decrease buttons
-        this.childrenIncreaseButton = page.getByRole('button', {name: "+"}).nth(2);
-        this.childrenDecreaseButton = page.getByRole('button', {name: "-"}).nth(2);
 
 
     }
