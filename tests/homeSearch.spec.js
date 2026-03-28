@@ -14,11 +14,19 @@ test.describe("Home Search", ()=>{
         await agodaPage.locator('[data-selenium="textInput"]').pressSequentially(testData[0].hotelName, {delay: 100});
 
         //handle popup auto complelte
-        await agodaPage.waitForSelector('[data-selenium="autoCompleteItem"]', {state: 'visible'})
-        await agodaPage.click('[data-selenium="autoCompleteItem"]') //click first item
+        // await agodaPage.waitForSelector('[data-selenium="autoCompleteItem"]', {state: 'visible'})
+        await agodaPage.locator('[data-testid="topDestinationListItem"]').first().click(); //click first item
+        
+        // const searchInput = agodaPage.locator('[data-selenium="textInput"]');
+        // await searchInput.click();
+        
+        
+        console.log(" done click outside to close the autocomplete popup");
+        
+        //search
+        await agodaPage.locator('[data-selenium="search-button"]').click();
 
-        //click fist options
-                
+        
 
     
     });
