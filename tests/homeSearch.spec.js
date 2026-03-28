@@ -4,6 +4,7 @@ import testData from '../data/testData.json';
 import {HomePage} from '../pages/homePage.pom.js';
 import { time } from 'node:console';
 import {getDate} from '../utils/dateFunction.js';
+import { TIMEOUT } from 'node:dns';
 
 
 test.describe("Home Search", ()=>{
@@ -111,19 +112,33 @@ test.describe("Home Search", ()=>{
         await agodaPage.waitForTimeout(3000)
         await agodaPage.locator('[data-element-name="occupancy-selector-panel-children"][data-selenium="minus"]').click();
 
-
-        
-
-
-
-
     })
 
     test('04 Connect all feature', async ({agodaPage}) =>{
-       
+        
+        console.log("1. Fill in search input...");
+        await agodaPage.searchBox.pressSequentially(testData[0].hotelName, {delay: 100});
+        console.log("   Search input filled with: " + testData[0].hotelName);
+        await agodaPage.firstSuggestion.click();
+        console.log("   First suggestion clicked: " + testData[0].hotelName);
+
+
+        
+        console.log("2. Select check-in and check-out dates ");
+
+
+        console.log("3. Select occupancy options");
+
+
+
+
+        console.log("4. Click search button ");
+        await agodaPage.searchButton.click();
+
+
      
 
-    console.log("Hi");
+    
     
     })
 

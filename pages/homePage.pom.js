@@ -7,6 +7,7 @@ export class HomePage {
 
         // 1. Search Box Locators
         this.searchBox = page.locator('[data-selenium="textInput"]');
+        // this.searchBox = page.getByRole('combobox');
         this.firstSuggestion = page.locator('[data-testid="topDestinationListItem"]').first();
         this.searchButton = page.locator('[data-selenium="search-button"]');
 
