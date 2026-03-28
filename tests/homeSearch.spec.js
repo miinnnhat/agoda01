@@ -1,4 +1,5 @@
-import {test, expect} from '../fixture/fixture.js';
+import {test} from '../fixture/fixture.js';
+import { expect } from '@playwright/test';
 import testData from '../data/testData.json';
 import {HomePage} from '../pages/homePage.pom.js';
 import { time } from 'node:console';
@@ -77,10 +78,71 @@ test.describe("Home Search", ()=>{
     });
 
     test('03 Occupancy selector', async ({agodaPage}) =>{
-        // await agodaPage.goto("https://www.agoda.com/");
+       
+        //Opening occupancy box
+        await agodaPage.locator('#occupancy-box').click() //if needed
+        // await agodaPage.waitForTimeout(3000)
+        console.log("1.  Popup opened!");
 
-        //Opening occupancy selector
-        await page.click('[data-selenium="occupancy-box"]') //if needed 
+        //const occupancyPopup = agodaPage.locator('[data-selenium="occupancyPicker"]');
+        //await expect (occupancyPopup).toBeVisible() 
+
+        //Rooms selection
+        console.log("2. Test Rooms Button (Rooms)...");
+        await agodaPage.locator('[data-element-name="occupancy-selector-panel-rooms"][data-selenium="plus"]').click();
+        await agodaPage.waitForTimeout(3000)
+        await agodaPage.locator('[data-element-name="occupancy-selector-panel-rooms"][data-selenium="minus"]').click();
+
+
+        //Adults selection
+        console.log("4. Test nút Người lớn (Adults)...");
+        await agodaPage.locator('[data-element-name="occupancy-selector-panel-adult"][data-selenium="plus"]').click();
+        await agodaPage.waitForTimeout(3000)
+        await agodaPage.locator('[data-element-name="occupancy-selector-panel-adult"][data-selenium="minus"]').click();   
+
+        //Children selection 
+        console.log("5. Test nút Trẻ em (Children)...");   
+        await agodaPage.locator('[data-element-name="occupancy-selector-panel-children"][data-selenium="plus"]').click();
+        await agodaPage.waitForTimeout(3000)
+        await agodaPage.locator('[data-element-name="occupancy-selector-panel-children"][data-selenium="minus"]').click();
+
+
+        
+
+
+
+
+    })
+
+    test('04 Occupancy selector', async ({agodaPage}) =>{
+       
+    console.log("BƯỚC 1: Click mở cái khung Occupancy Box...");
+    await agodaPage.locator('#occupancy-box').click();
+
+    console.log("BƯỚC 2: Chờ cái Popup thực sự nhảy ra...");
+    // Dùng waitForSelector để ép Playwright phải thấy cái popup rồi mới đi tiếp
+    await agodaPage.waitForSelector('[data-element-name="occupancy-selector-panel"]', { state: 'visible', timeout: 5000 });
+    console.log("-> Popup ĐÃ MỞ!");
+
+    console.log("BƯỚC 3: Bắt đầu đi tìm nút Cộng (Thêm) Phòng...");
+    // Đổi data-selenium="minus" thành "plus"
+    const plusBtn = agodaPage.locator('[data-element-name="occupancy-selector-panel-rooms"][data-selenium="plus"]').first();
+
+    // Kiểm tra sức khỏe của cái nút trước khi bấm
+    const isVisible = await plusBtn.isVisible();
+    const isDisabled = await plusBtn.isDisabled();
+    
+    console.log(`-> Nút cộng đang hiển thị (Visible)? : ${isVisible}`);
+    console.log(`-> Nút cộng bị khóa (Disabled)? : ${isDisabled}`);
+
+    console.log("BƯỚC 4: Bắt đầu Click...");
+    if (!isDisabled && isVisible) {
+        // Thêm { force: true } để bỏ qua các lớp overlay cản trở (nếu có)
+        await plusBtn.click({ force: true }); 
+        console.log("✅ ĐÃ CLICK CỘNG PHÒNG THÀNH CÔNG!");
+    } else {
+        console.log("❌ NÚT ĐANG BỊ LỖI HIỂN THỊ HOẶC BỊ KHÓA (Có thể đã đạt số phòng tối đa), KHÔNG THỂ CLICK!");
+    }
     })
 
 })

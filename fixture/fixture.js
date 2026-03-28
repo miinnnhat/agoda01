@@ -10,13 +10,8 @@ const test = base.test.extend({
     await page.goto(agodaUrl);
     
     // await page.waitForLoadState('networkidle');
-    
-    
     await use(page);
-    //teardown 
-
-    
-    
+        
     }
 });
 
