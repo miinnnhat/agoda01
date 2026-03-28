@@ -1,4 +1,6 @@
 export class HomePage {
+    
+    
     constructor(page){
         this.page = page;
 
@@ -9,6 +11,22 @@ export class HomePage {
         this.checkInDateSelector = page.locator('[data-selenium="checkInDate"]');
         this.checkOutDateSelector = page.locator('[data-selenium="checkOutDate"]');
 
+
+        //Calendar month and year
+
+        //Month Button
+        this.nextMonthButton = page.locator('.CalendarMonth_caption');
+        this.lastMonthButton = page.locator('.CalendarMonth_caption').nth(-1);
+
+        //Day Button
+        this.dayButton = page.locator('.CalendarDay__default');
+
+        //Year Button
+        // this.nextYearButton = page.locator('.CalendarMonth_caption');
+        // this.lastYearButton = page.locator('.CalendarMonth_caption').nth(-1);
+
+
+        //Selecting number of guests, rooms, children
 
         //Adult increase and decrease buttons
         this.adultIncreaseButton = page.getByRole('button', {name: "+"});
