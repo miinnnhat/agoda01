@@ -8,7 +8,7 @@ export class SearchPage {
     }
 
     async selectFirstHotel() {
-        console.log("5.1 Waiting for result loaded and hotel list to be visible");
+        
         await this.hotelListContainer.first().waitFor({ state: 'visible', timeout: 30000 });
 
         console.log("5.2 Filtering for the first available hotel (has price)");
