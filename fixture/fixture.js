@@ -1,5 +1,7 @@
 const base = require('@playwright/test');
 import {HomePage} from '../pages/homePage.pom.js';
+import {SearchPage} from '../pages/resultPage.pom.js';
+import {HotelPage} from '../pages/hotelPage.pom.js';
 
 const test = base.test.extend({
     agodaUrl: ['https://www.agoda.com/', { option: true }],
