@@ -56,8 +56,6 @@ export class HomePage {
     
     async selectDates(checkInStr, checkOutStr, targetMonthText) {
     
-    //await this.checkInBox.click();
-        
         let isMonthFound = false;
         await this.monthCaptions.first().waitFor({ state: 'visible', timeout: 5000 });
         let currentMonthYear = (await this.monthCaptions.first().innerText()).trim();
@@ -98,7 +96,7 @@ export class HomePage {
         await this.page.locator(`[data-selenium-date="${checkOutStr}"]`).click();
         await this.page.waitForTimeout(500);
 
-        // Click outside to close date picker
+        
         await this.page.keyboard.press('Escape');
 
 
@@ -115,10 +113,7 @@ export class HomePage {
             } else {
                 await minusBtn.click();
             }
-            
-            
             await this.page.waitForTimeout(300);
-            
             
             currentValue = parseInt(await valueLocator.innerText(), 10);
         }

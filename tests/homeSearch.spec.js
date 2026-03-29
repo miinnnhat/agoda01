@@ -46,29 +46,20 @@ test.describe("Home Search", ()=>{
 
         console.log("5.1 Waiting for result loaded and hotel list to be visible");
         
-        // wait for the hotel list to be visible 
         const searchPage = new SearchPage(agodaPage.page);
         const newTabPage = await searchPage.selectFirstHotel();
         await newTabPage.waitForLoadState('domcontentloaded');
 
-        console.log("6. Verifying price on Hotel Detail Page (New Tab)...");
+        console.log("6. Verifying price on Hotel Detail Page ");
         
         
         const detailPage = new HotelDetailPage(newTabPage);
-
-        // Wait for network to be idle to ensure page is fully loaded
+        await newTabPage.waitForLoadState('domcontentloaded');
         await newTabPage.waitForLoadState('networkidle');
-
-        // Scroll down to trigger sticky price visibility
         await newTabPage.evaluate(() => window.scrollBy(0, 500));
         
-        // Add additional wait time for the sticky price element to appear
-        await newTabPage.waitForTimeout(2000);
-
         const isDisplayed = await detailPage.isPriceVisible();
         expect(isDisplayed).toBeTruthy();
-
-        // print the price 
         const price = await detailPage.getPriceText();
         console.log(`\n[SUCCESS] Price is ${price}\n`);
     });

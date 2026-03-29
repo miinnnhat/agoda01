@@ -1,11 +1,11 @@
 [{  
     "scenario": " TC_01: Verify that user can see price of hotel",
     "hotelName": "Muong Thanh Sai Gon Centre Hotel",
-    "checkInDate": 1,
-    "checkOutDate": 2,
+    "checkInDate": 2,
+    "checkOutDate": 3,
     "rooms": 1,
-    "adults": 2,
-    "children": 0
+    "adults": 4,
+    "children": 2
 }
 
 ]
