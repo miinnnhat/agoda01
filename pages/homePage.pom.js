@@ -138,11 +138,11 @@ export class HomePage {
             throw new Error(`[Error] Children Must be between 0 and 9. Value provided: ${targetChildren}`);
         }
 
-        // 2. Kiểm tra ràng buộc giữa các trường (Cross-field validation)
+        
         if (targetAdults < targetRooms) {
-            throw new Error(`[Error] Số người lớn (${targetAdults}) không thể nhỏ hơn số phòng (${targetRooms}). Mỗi phòng cần ít nhất 1 người lớn.`);
+            throw new Error(`[Error]  (${targetAdults})  (${targetRooms}). Adults must be greater than or equal to Rooms.`);
         }
-        // 1. Mở popup occupancy
+        // 1. popup occupancy
         //await this.occupancyBox.click();
 
         // 2. Force adjust Rooms 
@@ -157,7 +157,6 @@ export class HomePage {
         console.log(`[Log] Adjusting Children to: ${targetChildren}`);
         await this._adjustValue(this.childrenValue, this.addChildrenBtn, this.minusChildrenBtn, targetChildren);
         
-        // Đóng popup occupancy (thường click ra ngoài hoặc click lại vào box)
-        // await this.occupancyBox.click(); 
+        
     }
 }
