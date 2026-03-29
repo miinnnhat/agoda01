@@ -16,7 +16,8 @@ export class HomePage {
         this.checkInBox = page.locator('[data-selenium="checkInBox"]');
         this.checkOutBox = page.locator('[data-selenium="checkOutBox"]');
 
-        this.monthCaptions = page.locator('.DayPicker-Caption');
+        this.monthCaptions = page.locator('div.DayPicker-Caption.DayPicker-Caption-Wide:visible');
+        
         
         this.nextMonthBtn = page.getByRole('button', { name: 'Next Month' });
         this.lastMonthBtn = page.getByRole('button', { name: 'Previous Month' });
@@ -44,6 +45,10 @@ export class HomePage {
     }
     async searchHotel(hotelName) {
         
+        console.log(`[Log] Tìm tháng: `);
+
+   
+
         await this.searchBox.pressSequentially(hotelName, { delay: 100 });
         // Chờ suggestion xuất hiện và click
         await this.firstSuggestion.waitFor({ state: 'visible' });
@@ -51,76 +56,56 @@ export class HomePage {
     }
       
     
-    async selectDates(startDays, endDays) {
-        // --- Step 1: Validate input ---
-        if (!Number.isInteger(startDays) || !Number.isInteger(endDays)) {
-            throw new Error("Error: Input must be integers!");
-        }
-        if (startDays < 0 || endDays < 0) {
-            throw new Error("Error: Days cannot be negative!");
-        }
-        if (startDays >= endDays) {
-            throw new Error(`Error: Check-in date (${startDays}) must be before check-out date (${endDays})!`);
-        }
-
-        // --- Step 2: Calculate Dates ---
-        const today = new Date();
-
-    // Format date to 'YYYY-MM-DD'
-    const formatDate = (date) => {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
-    };
-
-    //Get Check-in date (current date + startDays)
-    const checkInDate = new Date(today);
-    checkInDate.setDate(today.getDate() + startDays);
-    const checkInStr = formatDate(checkInDate); 
     
-    // Get Target Month Year 
-    const targetMonthText = checkInDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    async selectDates(checkInStr, checkOutStr, targetMonthText) {
+    
+    //await this.checkInBox.click();
+        
+        let isMonthFound = false;
+        
+        // Ép Playwright ĐỢI cái caption đầu tiên thực sự hiện lên màn hình
+        await this.monthCaptions.first().waitFor({ state: 'visible', timeout: 5000 });
+        let currentMonthYear = (await this.monthCaptions.first().innerText()).trim();
 
-    // Get Check-out date (current date + endDays)
-    const checkOutDate = new Date(today);
-    checkOutDate.setDate(today.getDate() + endDays);
-    const checkOutStr = formatDate(checkOutDate); 
-
-    console.log(`[Log] Target (Fixxed): Check-in ${checkInStr}, Check-out ${checkOutStr}, Value: ${targetMonthText}`);
-
-        // --- Step 3: Open Calendar Popup ---
-        await this.checkInBox.click();
-        await this.page.waitForTimeout(1000);
-
-        // --- Step 4: Loop to Find the Month 
-        let retries = 12; 
-        while (retries > 0) {
-            
-            const currentMonthYear = (await this.monthCaptions.first().textContent())?.trim();
-            
-            if (currentMonthYear == targetMonthText) {
-                console.log(`Correct  ${currentMonthYear}`);
-                break; 
+        if (currentMonthYear == targetMonthText) {
+            isMonthFound = true;
+            console.log(`[Log] Đúng tháng ngay từ đầu: ${currentMonthYear}`);
+        } else {
+            // Logic Lùi 1 lần
+            const isLastMonthDisabled = await this.lastMonthBtn.isDisabled();
+            if (!isLastMonthDisabled) {
+                await this.lastMonthBtn.click();
+                currentMonthYear = (await this.monthCaptions.first().innerText()).trim();
+                if (currentMonthYear === targetMonthText) {
+                    isMonthFound = true;
+                }
             }
 
-            
-            await this.lastMonthBtn.click();
-            await this.page.waitForTimeout(500);
-            retries--;
+            // Logic Tiến tối đa 3 lần
+            if (!isMonthFound) {
+                for (let i = 0; i < 3; i++) {
+                    await this.nextMonthBtn.click();
+                    await this.page.waitForTimeout(500);
+                    currentMonthYear = (await this.monthCaptions.first().innerText()).trim();
+                    if (currentMonthYear === targetMonthText) {
+                        isMonthFound = true;
+                        break;
+                    }
+                }
+            }
         }
 
-        if (retries == 0) throw new Error("Error: Could not find the target month in calendar!");
+        if (!isMonthFound) throw new Error(`Error: Không tìm thấy tháng ${targetMonthText}!`);
 
-        // --- Step 5: Select Check-in and Check-out Dates ---
+        // Click ngày
         await this.page.locator(`[data-selenium-date="${checkInStr}"]`).click();
         await this.page.waitForTimeout(500);
-        
         await this.page.locator(`[data-selenium-date="${checkOutStr}"]`).click();
         await this.page.waitForTimeout(500);
 
-        // Click outside to close calendar popup
-        await this.page.mouse.click(10, 10);
-        console.log(`[Log] Dates selected: Check-in ${checkInStr}, Check-out ${checkOutStr}`);
-    }
+        // Bấm phím Esc để đóng lịch
+        await this.page.keyboard.press('Escape');
+
+
+}
 }
