@@ -7,7 +7,7 @@ export class HotelDetailPage {
     }
 
     async isPriceVisible() {
-        console.log("6.1 Waiting for price to be visible on the new tab...");
+        console.log("6.1 Waiting for price to be visible on the new tab");
        
         await this.priceDisplay.waitFor({ state: 'visible', timeout: 30000 });
         return await this.priceDisplay.isVisible();

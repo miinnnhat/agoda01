@@ -22,8 +22,7 @@ test.describe("Home Search", ()=>{
 
         console.log("2. Calculate dates and select on calendar...");
 
-        // Lấy data từ Utils
-        const targetDates = getBookingDates(data.checkInDate, data.checkOutDate);
+                const targetDates = getBookingDates(data.checkInDate, data.checkOutDate);
 
         
         await agodaPage.selectDates(
@@ -60,13 +59,18 @@ test.describe("Home Search", ()=>{
         // Wait for network to be idle to ensure page is fully loaded
         await newTabPage.waitForLoadState('networkidle');
 
+        // Scroll down to trigger sticky price visibility
+        await newTabPage.evaluate(() => window.scrollBy(0, 500));
         
+        // Add additional wait time for the sticky price element to appear
+        await newTabPage.waitForTimeout(2000);
+
         const isDisplayed = await detailPage.isPriceVisible();
         expect(isDisplayed).toBeTruthy();
 
-        // In ra giá
+        // print the price 
         const price = await detailPage.getPriceText();
-        console.log(`\n[SUCCESS] Verify thành công! Giá phòng là: ${price}\n`);
+        console.log(`\n[SUCCESS] Price is ${price}\n`);
     });
 
 });
