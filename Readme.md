@@ -33,8 +33,8 @@ The main purpose of this project is to automate the end-to-end flow of searching
  ┣ 📂 utils          # Helper functions (e.g., dynamic date calculator)
  ┣ 📜 playwright.config.js # Global Playwright configuration
  ┗ 📜 package.json   # Project dependencies and script
-
-
+```
+---
 ## Prerequisites
 
 Before you begin, ensure you have the following installed on your local machine:
@@ -43,18 +43,69 @@ Before you begin, ensure you have the following installed on your local machine:
 
 ---
 
-##  Installation & Setup
+#  Installation & Setup
 
 1. **Clone the repository:**
-   ```bash
+```bash
    git clone [https://github.com/miinnnhat/agoda01.git](https://github.com/miinnnhat/agoda01.git)
-   cd agoda01
-
-2. Install project dependencies:
+   
+```
+```bash
+cd agoda01
+```
+2. **Install project dependencies:
 
 ```bash
-   npm install
+npm install
+```
 
 3. Install Playwright Browsers:
-   ```bash
-   npx playwright install
+```bash
+npx playwright install
+```
+---
+# Running Tests
+You can execute the automated tests using the commands below.
+
+Run all tests in headless mode (default):
+
+```Bash
+npx playwright test
+```
+Run tests in headed mode (opens the browser UI):
+
+```Bash
+npx playwright test --headed
+```
+Run tests using the Playwright UI mode (highly recommended for debugging):
+
+```Bash
+npx playwright test --ui
+```
+Run a specific test file:
+
+```Bash
+npx playwright test tests/homeSearch.spec.js
+```
+
+# Viewing Reports
+After execution, Playwright automatically generates an HTML report. To view this report in your browser, run:
+
+```Bash
+npx playwright show-report
+```
+
+# Test Scenario Coverage
+**The current project covers the following core workflow:**
+
+1. Navigate to the Agoda homepage.
+
+2. Input the target hotel name (data driven via JSON).
+
+3. Calculate and select Check-in / Check-out dates dynamically (Current Date + offset defined in JSON).
+
+4. Configure the number of Rooms, Adults, and Children.
+
+5. Execute the search and select the first valid result that displays a price.
+
+6. Verify that the price value is successfully displayed on the new hotel detail tab.
