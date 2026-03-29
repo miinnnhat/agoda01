@@ -132,32 +132,20 @@ test.describe("Home Search", ()=>{
             targetDates.monthToSearch
         );
 
-        console.log(`✅ Check-in: ${targetDates.checkInDate}, Check-out: ${targetDates.checkOutDate} selected!`);
+        console.log(`Check-in: ${targetDates.checkInDate}, Check-out: ${targetDates.checkOutDate} selected!`);
 
 
-
-
-
-
-
-
-
-        console.log("3. Select occupancy options (To be implemented)...");
-        // Gọi hàm chọn số lượng người ở đây
-
-
-
-
-
-
-
+        console.log("3. Select occupancy options (Rooms, Adults, Children)");
+        await agodaPage.setOccupancy(data.rooms, data.adults, data.children);
 
 
         console.log("4. Click search button...");
         await agodaPage.searchButton.click();
-        console.log("   Search button clicked!");
+        console.log(" Search button clicked!");
 
-        console.log("5. Đang chờ danh sách kết quả và click khách sạn đầu tiên...");
+
+
+        console.log("5. Waiting for search results ");
         
         
 
