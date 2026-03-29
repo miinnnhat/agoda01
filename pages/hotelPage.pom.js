@@ -1,12 +1,19 @@
-export class HotelPage {
-    
+export class HotelDetailPage {
     constructor(page) {
-        this.page = page;
-        // Locator price display
-        this.priceDisplay = page.locator('[data-selenium="price-label"]').first();
+        
+        this.page = page; 
+        
+        this.priceDisplay = page.locator('.StickyNavPrice__priceDetail').first();
     }
 
-    async getPriceLocator() {
-        return this.priceDisplay;
+    async isPriceVisible() {
+        console.log("6.1 Waiting for price to be visible on the new tab...");
+       
+        await this.priceDisplay.waitFor({ state: 'visible', timeout: 30000 });
+        return await this.priceDisplay.isVisible();
+    }
+
+    async getPriceText() {
+        return await this.priceDisplay.innerText();
     }
 }

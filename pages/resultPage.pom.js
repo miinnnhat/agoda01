@@ -3,23 +3,27 @@ export class SearchPage {
         
         this.page = page;
         
-        //Grid/List view
         this.hotelListContainer = page.locator('li[data-selenium="hotel-item"]'); 
-        this.firstAvailableHotel = page.locator('[data-element-name="property-card-content"][data-element-index="0"]').first();
+        this.priceLocator = page.locator('[data-selenium="display-price"]');
     }
 
     async selectFirstHotel() {
-        
-        //wait for result loaded and hotel list to be visible
-        await this.hotelListContainer.waitFor({ state: 'visible' });
+        console.log("5.1 Waiting for result loaded and hotel list to be visible");
+        await this.hotelListContainer.first().waitFor({ state: 'visible', timeout: 30000 });
 
-        // Click at the first hotel and wait for the new tab to open
+        console.log("5.2 Filtering for the first available hotel (has price)");
+        const availableHotels = this.hotelListContainer.filter({ has: this.priceLocator });
+        const firstAvailableHotel = availableHotels.first();
+        
+        await firstAvailableHotel.waitFor({ state: 'visible' });
+
+        console.log("5.3 Click at the first hotel and wait for the new tab to open...");
         const [newTabPage] = await Promise.all([
             this.page.context().waitForEvent('page'),
-            this.firstAvailableHotel.click()
+            firstAvailableHotel.click()
         ]);
-        
         
         return newTabPage; 
     }
+
 }
