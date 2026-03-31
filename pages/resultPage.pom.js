@@ -31,6 +31,7 @@ export class SearchPage {
     }
     
     async chooseFirstHotel(){
+         await this.page.locator('.SearchboxBackdrop').click();
         const firstHotelCard = this.hotelListContainer.first();
         await firstHotelCard.waitFor({ state: 'visible', timeout: 30000 });
         

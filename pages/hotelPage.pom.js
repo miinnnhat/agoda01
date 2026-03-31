@@ -19,7 +19,7 @@ export class HotelDetailPage {
         await this.page.evaluate(() => window.scrollBy(0, 1500));
         await this.page.waitForTimeout(1500);
 
-        await this.page.evaluate(() => window.scrollBy(0, 1500));
+        // await this.page.evaluate(() => window.scrollBy(0, 1500));
         //await this.page.waitForTimeout(3000);
 
         await this.priceDisplay.waitFor({ state: 'visible', timeout: 30000 });
