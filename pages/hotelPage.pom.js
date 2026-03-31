@@ -3,7 +3,11 @@ export class HotelDetailPage {
         
         this.page = page; 
         
-        this.priceDisplay = page.locator('.StickyNavPrice__priceDetail').first();
+        this.priceDisplay = page.locator('#hotelNavBar span').filter({ hasText: 'from ₫' });
+
+        //backup 
+        this.priceHotel = page.locator('span').filter({ hasText: /^from\s*₫/ });
+        this.priceDetail = page.locator('.StickyNavPrice__priceDetail').first();
     }
 
     async isPriceVisible() {
@@ -11,7 +15,7 @@ export class HotelDetailPage {
         
         await this.page.bringToFront();
         await this.page.waitForLoadState('domcontentloaded');
-        await this.page.waitForLoadState('networkidle');
+        // await this.page.waitForLoadState('networkidle');
         await this.page.evaluate(() => window.scrollBy(0, 1500));
         await this.page.waitForTimeout(1500);
 
@@ -25,6 +29,24 @@ export class HotelDetailPage {
     async getPriceText() {
         return await this.priceDisplay.innerText();
     }
+
+    async hasPrice() {
+        
+        console.log("Waiting for price to be visible on the new tab");
+        await this.page.bringToFront();
+
+        await this.priceHotel.waitFor({ state: 'visible', timeout: 1500 });
+        return await this.priceHotel.isVisible();
+
+
+    }
+
+    async getPrice() {
+
+        return await this.priceDetail.innerText();
+    }
+
+
 }
 
 
